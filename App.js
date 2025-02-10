@@ -5,7 +5,7 @@ import { useAuthRequest } from 'expo-auth-session';  // For Google Login
 import * as Facebook from 'expo-facebook';  // For Facebook Login
 import axios from 'axios';  // For API calls
 
-const BACKEND_URL = 'https://yourbackend.com'; // Replace with your actual backend URL
+const BACKEND_URL = 'https://trust-score-backend.vercel.app/trust-score-backend'; // Replace with your actual backend URL
 
 export default function App() {
   const [user, setUser] = useState(null);  // Stores logged-in user data

@@ -1,0 +1,110 @@
+import React from 'react';
+import { StatusBar } from 'expo-status-bar';
+import { StyleSheet, Text, View, Button, Alert } from 'react-native';
+import { useAuthRequest } from 'expo-auth-session';  // For Google Login
+import * as Facebook from 'expo-facebook';  // For Facebook Login
+import axios from 'axios';  // For API calls
+
+// Google login function
+const googleLogin = async () => {
+  const { request, response, promptAsync } = useAuthRequest({
+    clientId: '543437855241-g0t4rtnhvg4fpv1kaq0u0ooakqsulbuj.apps.googleusercontent.com',  // replace with your client ID
+  });
+
+  // Check for successful response
+  if (response?.type === 'success') {
+    const { id_token } = response.params;
+    // Send token to backend for verification and trust score update
+    try {
+      const response = await axios.post('YOUR_BACKEND_URL/update-trust-score', {
+        token: id_token,
+      });
+      console.log(response.data);
+    } catch (error) {
+      console.error("Error sending token to backend", error);
+    }
+  } else {
+    Alert.alert('Login Failed', 'Unable to log in with Google.');
+  }
+};
+
+// Facebook login function
+const facebookLogin = async () => {
+  try {
+    await Facebook.initializeAsync({
+      appId: 'YOUR_FACEBOOK_APP_ID', // replace with your Facebook App ID
+    });
+    const { type, token } = await Facebook.logInWithReadPermissionsAsync();
+    if (type === 'success') {
+      // Send token to backend for verification and trust score update
+      try {
+        const response = await axios.post('YOUR_BACKEND_URL/update-trust-score', {
+          token: token,
+        });
+        console.log(response.data);
+      } catch (error) {
+        console.error("Error sending token to backend", error);
+      }
+    } else {
+      Alert.alert('Login Failed', 'Unable to log in with Facebook.');
+    }
+  } catch (e) {
+    Alert.alert('Facebook Login Error', e.message);
+  }
+};
+
+export default function App() {
+  return (
+    <View style={styles.container}>
+      <Text>Open up App.js to start working on your app!</Text>
+      <Button title="Login with Google" onPress={googleLogin} />
+      <Button title="Login with Facebook" onPress={facebookLogin} />
+      <StatusBar style="auto" />
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 20,
+  },
+});
+
+
+
+
+
+
+
+
+
+
+
+/////////////////////////////////////////// old original stuff below 2/9/25
+
+
+
+//import { StatusBar } from 'expo-status-bar';
+//import { StyleSheet, Text, View } from 'react-native';
+
+//export default function App() {
+//  return (
+//    <View style={styles.container}>
+//      <Text>Open up App.js to start working on your app!</Text>
+//      <StatusBar style="auto" />
+//    </View>
+//  );
+//}
+
+//const styles = StyleSheet.create({
+//  container: {
+//    flex: 1,
+//    backgroundColor: '#fff',
+//    alignItems: 'center',
+//    justifyContent: 'center',
+//  },
+//});
