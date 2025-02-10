@@ -3,7 +3,9 @@ const bodyParser = require('body-parser');
 const axios = require('axios');
 
 const app = express();
-const port = 5000;
+
+// Use the port Vercel assigns
+const port = process.env.PORT || 3000; // Fallback to 3000 for local testing
 
 // Middleware to parse JSON bodies
 app.use(bodyParser.json());
@@ -19,8 +21,6 @@ app.post('/update-trust-score', async (req, res) => {
   try {
     // Here, you would send the token to Google/Facebook or other services to validate
     // For now, we'll mock a response from the external service for demonstration purposes
-    // Example with Google OAuth (you'll need to verify the token on your backend)
-
     const googleResponse = await axios.post(
       'https://oauth2.googleapis.com/tokeninfo',
       { id_token: token }
@@ -40,7 +40,7 @@ app.post('/update-trust-score', async (req, res) => {
     // Send the trust score back to the app
     res.send({
       score: trustScore,
-      grade: 'A-F', // can be calculated based on multiple linked accounts
+      grade: 'A-F', // This can be calculated based on multiple linked accounts
     });
   } catch (error) {
     console.error('Error during token verification:', error);
@@ -48,6 +48,7 @@ app.post('/update-trust-score', async (req, res) => {
   }
 });
 
+// Vercel will handle the port automatically
 app.listen(port, () => {
   console.log(`Backend running at http://localhost:${port}`);
 });
